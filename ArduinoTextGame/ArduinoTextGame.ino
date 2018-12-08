@@ -1,6 +1,9 @@
 
 // include the library code:
 #include <LiquidCrystal.h>
+#include <SPI.h>
+#include <SD.h>
+#include <ArduinoJson.h>
 
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
