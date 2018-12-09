@@ -31,7 +31,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-
 }
 
 String getTextFromFile(String fileName){
@@ -52,4 +51,10 @@ String getTextFromFile(String fileName){
       Serial.println("error opening "+fileName+extension);
     }
     return result;
+}
+
+JsonObject& getJsonFromText(String text){
+    StaticJsonBuffer<200> jsonBuffer;
+    JsonObject& object = jsonBuffer.parseObject(text);
+    return object;
 }
