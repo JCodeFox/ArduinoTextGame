@@ -5,10 +5,10 @@
 #include <SD.h>
 #include <ArduinoJson.h>
 
-const String extension=".txt";
+const String extension=".json";
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+const int rs = 7, en = 6, d4 = 5, d5 = 8, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int cents=10000;
@@ -31,6 +31,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  JsonObject& jsonObj=getJsonFromFile("init");
+  cents=jsonObj["cents"];
 }
 
 String getTextFromFile(String fileName){
@@ -38,8 +40,6 @@ String getTextFromFile(String fileName){
     String result="";
     File myFile=SD.open(fileName+extension);
     if (myFile) {
-    Serial.println("test.txt:");
-
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
       result=result+myFile.read();
@@ -57,4 +57,9 @@ JsonObject& getJsonFromText(String text){
     StaticJsonBuffer<200> jsonBuffer;
     JsonObject& object = jsonBuffer.parseObject(text);
     return object;
+}
+
+JsonObject& getJsonFromFile(String fileName){
+  String jsonString=getTextFromFile(fileName);
+  return getJsonFromText(jsonString);
 }
