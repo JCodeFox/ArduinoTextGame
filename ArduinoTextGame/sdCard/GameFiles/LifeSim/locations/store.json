@@ -1,0 +1,7 @@
+{
+  "type":"store",
+  "accessible":["home"],
+  "messages":["You are at the store!"],
+  "forSale":[{"type":"food","name":"Burger","price":100,"saturation":50}],
+  "prompt":">"
+}
