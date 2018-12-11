@@ -1,11 +1,13 @@
-
+ 
 // include the library code:
 #include <LiquidCrystal.h>
 #include <SPI.h>
 #include <SD.h>
 #include <ArduinoJson.h>
 
-const String extension=".json";
+const String extension=".ar";
+String currentFolder="/gfiles/lsim/";
+String currentFile="init";
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
 const int rs = 7, en = 6, d4 = 5, d5 = 8, d6 = 3, d7 = 2;
@@ -17,22 +19,27 @@ void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   Serial.print("Initializing SD card...");
+  pinMode(10,OUTPUT);
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
     while (1);
   }
   Serial.println("initialization done.");
+  JsonObject& json=getJsonFromFile(currentFolder+"init");
+  String temp=json["start"];
+  currentFile=temp;
+  JsonObject& json2=getJsonFromFile(currentFolder+"loc/"+currentFile);
+  String message=json2["messages"];
+  Serial.println(message);
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
-  lcd.setCursor(0, 0);
-  lcd.print("$");
-  lcd.print(cents/100);
+  lcd.setCursor(0,0);
+  lcd.print(message);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  JsonObject& jsonObj=getJsonFromFile("init");
-  cents=jsonObj["cents"];
+  
 }
 
 String getTextFromFile(String fileName){
@@ -42,7 +49,7 @@ String getTextFromFile(String fileName){
     if (myFile) {
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
-      result=result+myFile.read();
+      result=result+char(myFile.read());
     }
       // close the file:
       myFile.close();
