@@ -27,8 +27,8 @@ void setup() {
   Serial.println("initialization done.");
   JsonObject& json=getJsonFromFile(currentFolder+"init");
   String temp=json["start"];
-  currentFile=temp;
-  JsonObject& json2=getJsonFromFile(currentFolder+"loc/"+currentFile);
+  currentFile="home";
+  JsonObject& json2=getJsonFromFile(currentFolder+"loc/home");
   String message=json2["messages"];
   Serial.println(message);
   // set up the LCD's number of columns and rows:
@@ -49,7 +49,7 @@ String getTextFromFile(String fileName){
     if (myFile) {
     // read from the file until there's nothing else in it:
     while (myFile.available()) {
-      result=result+char(myFile.read());
+      result+=char(myFile.read());
     }
       // close the file:
       myFile.close();
