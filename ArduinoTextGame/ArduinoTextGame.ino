@@ -1,9 +1,9 @@
- 
+//string.toInt();
+
 // include the library code:
 #include <LiquidCrystal.h>
 #include <SPI.h>
 #include <SD.h>
-#include <ArduinoJson.h>
 
 const String extension=".ar";
 String currentFolder="/gfiles/lsim/";
@@ -25,16 +25,9 @@ void setup() {
     while (1);
   }
   Serial.println("initialization done.");
-  JsonObject& json=getJsonFromFile(currentFolder+"init");
-  String temp=json["start"];
-  currentFile="home";
-  JsonObject& json2=getJsonFromFile(currentFolder+"loc/home");
-  String message=json2["messages"];
-  Serial.println(message);
-  // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
-  lcd.setCursor(0,0);
-  lcd.print(message);
+  String dat=getTextFromFile("test");
+  String data=getValueById(dat,"thing");
+  Serial.println(data);
 }
 
 void loop() {
@@ -60,13 +53,34 @@ String getTextFromFile(String fileName){
     return result;
 }
 
-JsonObject& getJsonFromText(String text){
-    StaticJsonBuffer<200> jsonBuffer;
-    JsonObject& object = jsonBuffer.parseObject(text);
-    return object;
+// Copied and verified from stackoverflow
+// https://stackoverflow.com/questions/9072320/split-string-into-string-array
+String getValue(String data, char separator, int index)
+{
+  int found = 0;
+  int strIndex[] = {0, -1};
+  int maxIndex = data.length()-1;
+
+  for(int i=0; i<=maxIndex && found<=index; i++){
+    if(data.charAt(i)==separator || i==maxIndex){
+        found++;
+        strIndex[0] = strIndex[1]+1;
+        strIndex[1] = (i == maxIndex) ? i+1 : i;
+    }
+  }
+
+  return found>index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-JsonObject& getJsonFromFile(String fileName){
-  String jsonString=getTextFromFile(fileName);
-  return getJsonFromText(jsonString);
+String getValueById(String data, String id){
+  String currentData="/";
+  int index=0;
+  while(currentData!=""){
+    currentData=getValue(data,'/',index);
+    index++;
+    if(getValue(data,':',1)==id){
+      return getValue(data,':',2);
+    }
+  }
+  return "";
 }
