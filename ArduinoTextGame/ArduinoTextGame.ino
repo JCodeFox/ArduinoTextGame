@@ -26,8 +26,12 @@ void setup() {
   }
   Serial.println("initialization done.");
   String dat=getTextFromFile("test");
-  String data=getValueById(dat,"thing");
-  Serial.println(data);
+  dat=getValueById(dat,"items");
+  dat=getValue(dat,'-',0);
+  Serial.println(getValue(dat,'-',0));
+  dat=getValue(dat,',',1);
+  cents-=dat.toInt();
+  Serial.println(cents);
 }
 
 void loop() {
@@ -78,8 +82,8 @@ String getValueById(String data, String id){
   while(currentData!=""){
     currentData=getValue(data,'/',index);
     index++;
-    if(getValue(data,':',1)==id){
-      return getValue(data,':',2);
+    if(getValue(currentData,':',1)==id){
+      return getValue(currentData,':',2);
     }
   }
   return "";
