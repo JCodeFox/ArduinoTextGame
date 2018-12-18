@@ -31,7 +31,8 @@ void setup() {
   Serial.println(getValue(dat,'-',0));
   dat=getValue(dat,',',1);
   cents-=dat.toInt();
-  Serial.println(cents);
+  lcd.print("$");
+  lcd.print(cents);
 }
 
 void loop() {
