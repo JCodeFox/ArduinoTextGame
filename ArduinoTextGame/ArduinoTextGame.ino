@@ -27,17 +27,22 @@ void setup() {
   Serial.println("initialization done.");
   String dat=getTextFromFile("test");
   dat=getValueById(dat,"items");
-  dat=getValue(dat,'-',0);
-  Serial.println(getValue(dat,'-',0));
-  dat=getValue(dat,',',1);
-  cents-=dat.toInt();
-  lcd.print("$");
-  lcd.print(cents);
+  Serial.println(dat);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  
+  String dat=getTextFromFile("test");
+  dat=getValueById(dat,"items");
+  if(Serial.available()>0){
+    String incoming = Serial.readString();
+    int val=incoming.toInt();
+    dat=getValue(dat,'-',val);
+    cents-=getValue(dat,',',1).toInt();
+    dat=getValue(dat,',',0);
+    Serial.println(dat);
+    lcd.setCursor(0,0);
+    lcd.print(cents);
+  }
 }
 
 String getTextFromFile(String fileName){
