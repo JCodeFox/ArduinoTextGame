@@ -14,6 +14,7 @@ const int rs = 7, en = 6, d4 = 5, d5 = 8, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int cents=10000;
+int currentId=0;
 
 void setup() {
   // Open serial communications and wait for port to open:
@@ -30,19 +31,48 @@ void setup() {
   Serial.println(dat);
 }
 
-void loop() {
-  String dat=getTextFromFile("test");
-  dat=getValueById(dat,"items");
+void loop() {                                      
+  int val=buttonState();
+  if(val>=0){
+    lcd.clear(); 
+    changeId(val);
+    /*dat=getValue(dat,'-',val);
+    dat=getValue(dat,',',0);*/
+  }
+}
+
+int buttonState(){
+  int num=-1;
   if(Serial.available()>0){
     String incoming = Serial.readString();
-    int val=incoming.toInt();
-    dat=getValue(dat,'-',val);
-    cents-=getValue(dat,',',1).toInt();
-    dat=getValue(dat,',',0);
-    Serial.println(dat);
-    lcd.setCursor(0,0);
-    lcd.print(cents);
+    num=incoming.toInt();
+    Serial.flush();
   }
+  return num;
+}
+
+int changeId(int val){
+  String dat=getTextFromFile("test");
+  dat=getValueById(dat,"items");
+  switch(val){
+    case 0:
+      currentId--;
+      break;
+    case 1:
+      dat=getValue(dat,'-',currentId);
+      cents-=getValue(dat,',',1).toInt();
+      break;
+    case 2:
+      currentId++;
+      break;
+    default:
+      break;
+  }
+  dat=getValue(dat,'-',currentId);
+  dat=getValue(dat,',',0);
+  Serial.println(dat);
+  lcd.setCursor(0,0);
+  lcd.print(cents);
 }
 
 String getTextFromFile(String fileName){
