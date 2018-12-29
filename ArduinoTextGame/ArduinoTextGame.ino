@@ -1,7 +1,7 @@
 //string.toInt();
 
 // include the library code:
-#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h>
 #include <SPI.h>
 #include <SD.h>
 
@@ -11,7 +11,7 @@ String currentFile="init";
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
 const int rs = 7, en = 6, d4 = 5, d5 = 8, d6 = 3, d7 = 2;
-LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+LiquidCrystal_I2C  lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the I2C bus address for an unmodified backpack
 
 int cents=10000;
 int currentId=0;
@@ -19,6 +19,10 @@ int currentId=0;
 void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
+  lcd.begin (16,2);
+  lcd.setBacklightPin(3,POSITIVE);
+  lcd.setBacklight(HIGH);
+  lcd.clear();
   Serial.print("Initializing SD card...");
   pinMode(10,OUTPUT);
   if (!SD.begin(4)) {
