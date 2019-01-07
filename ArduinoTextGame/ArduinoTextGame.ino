@@ -1,6 +1,6 @@
 //TODO: RESET DATA READING BACK TO FILE READING!!!
 const String f="items:items:burger,100-fries,200-taco,300";
-const bool useSD=true;
+const bool useSD=false;
 //string.toInt();
 
 // include the library code:
