@@ -1,5 +1,5 @@
 //TODO: RESET DATA READING BACK TO FILE READING!!!
-const String f="items:items:burger,100-fries,200-taco-300";
+const String f="items:items:burger,100-fries,200-taco,300";
 const bool useSD=false;
 //string.toInt();
 
@@ -27,12 +27,13 @@ const int X_pin = 0; // analog pin connected to X output
 const int Y_pin = 1; // analog pin connected to Y output
 
 // The distance the stick has to move in order to be registered as moved
-const int nudge_x = 10;
-const int nudge_y = 10;
+const int nudge_x = 50;
+const int nudge_y = 50;
 
 // Values of stick when it is in the center
 int center_x=0;
 int center_y=0;
+bool valueChanged=false;
 
 void setup() {
   initStick();
@@ -59,7 +60,7 @@ void setup() {
   Serial.println(dat);
 }
 
-void loop() {                                      
+void loop() {                             
   int val=buttonState();
   if(val>=0){
     lcd.clear(); 
@@ -76,12 +77,18 @@ int buttonState(){
     num=incoming.toInt();
     Serial.flush();
   }*/
-  if(digitalRead(SW_pin)==0){
+  if((digitalRead(SW_pin)==0)&&(valueChanged==false)){
     num=1;
-  }else if(stickYPos()>0){
+    valueChanged=true;
+  }else if((stickYPos()>0)&&(valueChanged==false)){
     num=2;
-  }else if(stickYPos()<0){
+    valueChanged=true;
+  }else if((stickYPos()<0)&&(valueChanged==false)){
     num=0;
+    valueChanged=true;
+  }
+  if((digitalRead(SW_pin)==1)&&(stickYPos()==0)){
+    valueChanged=false;
   }
   return num;
 }
@@ -92,6 +99,9 @@ int changeId(int val){
   switch(val){
     case 0:
       currentId--;
+      if(getValue(dat,'-',currentId)==""){
+        currentId++;
+      }
       break;
     case 1:
       dat=getValue(dat,'-',currentId);
@@ -99,6 +109,9 @@ int changeId(int val){
       break;
     case 2:
       currentId++;
+      if(getValue(dat,'-',currentId)==""){
+        currentId--;
+      }
       break;
     default:
       break;
