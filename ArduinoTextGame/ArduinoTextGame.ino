@@ -96,33 +96,27 @@ int buttonState(){
 int changeId(int val){
   String dat=getTextFromFile("test");
   dat=getValueById(dat,"items");
-  switch(val){
-    case 0:
+  if(val==0){
       currentId--;
       if(currentId<0){
         currentId=0;
       }
-      break;
-    case 1:
-      String item=getValue(dat,'-',currentId);
-      cents-=getValue(item,',',1).toInt();
-      lcd.clear();
-      lcd.setCursor(0,0);
-      lcd.print("Paid:");
-      lcd.print(getValue(item,',',1));
-      lcd.setCursor(0,1);
-      lcd.print(getValue(item,',',0));
-      delay(1000);
-      lcd.clear();
-      break;
-    case 2:
-      currentId++;
-      if(getValue(dat,'-',currentId)==""){
-        currentId--;
-      }
-      break;
-    default:
-      break;
+  }else if(val==1){
+    String item=getValue(dat,'-',currentId);
+    cents-=getValue(item,',',1).toInt();
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Paid:");
+    lcd.print(getValue(item,',',1));
+    lcd.setCursor(0,1);
+    lcd.print(getValue(item,',',0));
+    delay(1000);
+    lcd.clear();
+  }else if(val==2){
+    currentId++;
+    if(getValue(dat,'-',currentId)==""){
+      currentId--;
+    }
   }
   dat=getValue(dat,'-',currentId);
   String itemName=getValue(dat,',',0);
