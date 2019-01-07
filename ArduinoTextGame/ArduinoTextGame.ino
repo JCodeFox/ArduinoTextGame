@@ -99,13 +99,21 @@ int changeId(int val){
   switch(val){
     case 0:
       currentId--;
-      if(getValue(dat,'-',currentId)==""){
-        currentId++;
+      if(currentId<0){
+        currentId=0;
       }
       break;
     case 1:
-      dat=getValue(dat,'-',currentId);
-      cents-=getValue(dat,',',1).toInt();
+      String item=getValue(dat,'-',currentId);
+      cents-=getValue(item,',',1).toInt();
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Paid:");
+      lcd.print(getValue(item,',',1));
+      lcd.setCursor(0,1);
+      lcd.print(getValue(item,',',0));
+      delay(1000);
+      lcd.clear();
       break;
     case 2:
       currentId++;
@@ -117,10 +125,13 @@ int changeId(int val){
       break;
   }
   dat=getValue(dat,'-',currentId);
-  dat=getValue(dat,',',0);
-  Serial.println(dat);
+  String itemName=getValue(dat,',',0);
+  String price=getValue(dat,',',1);
   lcd.setCursor(0,0);
   lcd.print(cents);
+  lcd.setCursor(0,1);
+  lcd.print(itemName);
+  lcd.print(":"+price);
 }
 
 String getTextFromFile(String fileName){
