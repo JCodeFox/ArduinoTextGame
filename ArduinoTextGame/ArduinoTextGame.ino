@@ -1,3 +1,6 @@
+//TODO: RESET DATA READING BACK TO FILE READING!!!
+const String f="items:items:burger,100-fries,200-taco-300";
+const bool useSD=false;
 //string.toInt();
 
 // include the library code:
@@ -16,7 +19,26 @@ LiquidCrystal_I2C  lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the I2C bus address for a
 int cents=10000;
 int currentId=0;
 
+//stick data-------------------------------------
+
+// Arduino Joystick pin numbers
+const int SW_pin = 2; // digital pin connected to switch output
+const int X_pin = 0; // analog pin connected to X output
+const int Y_pin = 1; // analog pin connected to Y output
+
+// The distance the stick has to move in order to be registered as moved
+const int nudge_x = 10;
+const int nudge_y = 10;
+
+// Values of stick when it is in the center
+int center_x=0;
+int center_y=0;
+
 void setup() {
+  initStick();
+  // Set the button pin to input that is high
+  pinMode(SW_pin, INPUT);
+  digitalWrite(SW_pin, HIGH);
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   lcd.begin (16,2);
@@ -27,7 +49,9 @@ void setup() {
   pinMode(10,OUTPUT);
   if (!SD.begin(4)) {
     Serial.println("initialization failed!");
-    while (1);
+    if(useSD){
+      while (1);
+    }
   }
   Serial.println("initialization done.");
   String dat=getTextFromFile("test");
@@ -47,10 +71,17 @@ void loop() {
 
 int buttonState(){
   int num=-1;
-  if(Serial.available()>0){
+  /*if(Serial.available()>0){
     String incoming = Serial.readString();
     num=incoming.toInt();
     Serial.flush();
+  }*/
+  if(digitalRead(SW_pin)==0){
+    num=1;
+  }else if(stickYPos()>0){
+    num=2;
+  }else if(stickYPos()<0){
+    num=0;
   }
   return num;
 }
@@ -80,6 +111,7 @@ int changeId(int val){
 }
 
 String getTextFromFile(String fileName){
+    if(!useSD){return f;}
     //All text stored in the file is put in this variable.
     String result="";
     File myFile=SD.open(fileName+extension);
@@ -94,6 +126,7 @@ String getTextFromFile(String fileName){
       // if the file didn't open, print an error:
       Serial.println("error opening "+fileName+extension);
     }
+    //TODO RETURN THIS BACK TO result
     return result;
 }
 
@@ -127,4 +160,39 @@ String getValueById(String data, String id){
     }
   }
   return "";
+}
+
+//Stick functions------------------------
+void initStick(){
+  // Get the x and y pos of the stick
+  center_x=analogRead(X_pin);
+  center_y=analogRead(Y_pin);
+  // Wait 10 miliseconds
+  delay(10);
+  // Calculate the average of the sticks current x and y
+  // values and the values of them ten miliseconds ago.
+  center_x+=analogRead(X_pin);
+  center_y+=analogRead(Y_pin);
+  center_x=center_x/2;
+  center_y=center_y/2;
+}
+
+int stickXPos(){
+  //Calculate the x position of the stick
+  int raw_x=analogRead(X_pin);
+  int calculated_x=raw_x-center_x;
+  if((calculated_x>nudge_x)||(calculated_x<-nudge_x)){
+    return calculated_x;
+  }
+  return 0;
+}
+
+int stickYPos(){
+  //Calculate the y position of the stick
+  int raw_y=analogRead(Y_pin);
+  int calculated_y=raw_y-center_y;
+  if((calculated_y>nudge_y)||(calculated_y<-nudge_y)){
+    return -calculated_y;
+  }
+  return 0;
 }
