@@ -1,5 +1,5 @@
 //TODO: RESET DATA READING BACK TO FILE READING!!!
-const String f="items:items:burger,100-fries,200-taco,300";
+const String f="items:items:burger,1-fries,2-taco,3";
 const bool useSD=false;
 //string.toInt();
 
@@ -16,7 +16,7 @@ String currentFile="init";
 const int rs = 7, en = 6, d4 = 5, d5 = 8, d6 = 3, d7 = 2;
 LiquidCrystal  lcd(rs, en, d4, d5, d6, d7);
 
-int cents=10000;
+int dollars=100;
 int currentId=0;
 
 //stick data-------------------------------------
@@ -42,6 +42,7 @@ void setup() {
   digitalWrite(SW_pin, HIGH);
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
+  lcd.begin(16, 2);
   lcd.clear();
   Serial.print("Initializing SD card...");
   pinMode(10,OUTPUT);
@@ -100,7 +101,7 @@ int changeId(int val){
       }
   }else if(val==1){
     String item=getValue(dat,'-',currentId);
-    cents-=getValue(item,',',1).toInt();
+    dollars-=getValue(item,',',1).toInt();
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Paid:");
@@ -119,7 +120,7 @@ int changeId(int val){
   String itemName=getValue(dat,',',0);
   String price=getValue(dat,',',1);
   lcd.setCursor(0,0);
-  lcd.print(cents);
+  lcd.print(dollars);
   lcd.setCursor(0,1);
   lcd.print(itemName);
   lcd.print(":"+price);
