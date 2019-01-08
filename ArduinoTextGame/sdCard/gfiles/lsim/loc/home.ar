@@ -1,6 +1,6 @@
 {
   "type":"home",
   "accessible":["store"],
-  "messages":["You are at home!"],
+  "messages":"You are at home!",
   "prompt":">"
 }
