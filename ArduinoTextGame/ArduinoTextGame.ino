@@ -57,6 +57,10 @@ void setup() {
   String dat=getTextFromFile("test");
   dat=getValueById(dat,"items");
   Serial.println(dat);
+  writeTextToFile("data/inv","DATA1");
+  writeTextToFile("data/inv","DATA2");
+  writeTextToFile("data/inv","DATA3");
+  Serial.println(getTextFromFile("data/inv"));
 }
 
 void loop() {                             
@@ -145,6 +149,11 @@ String getTextFromFile(String fileName){
     }
     //TODO RETURN THIS BACK TO result
     return result;
+}
+void writeTextToFile(String fileName, String data){
+  File myFile = SD.open(fileName+extension,FILE_WRITE);
+  myFile.println(data);
+  myFile.close();
 }
 
 // Copied and verified from stackoverflow
