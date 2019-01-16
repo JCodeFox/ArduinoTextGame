@@ -1,0 +1,17 @@
+removeText="item";
+file=sd.open("File",read);
+data=file.readByte();
+int firstID=-1;
+int lastID=-1;
+int i=0;
+while (data != ""){
+	data=file.readByte();
+	i++;
+	if(data==removeText[0]){
+		firstID=i;
+		for(int j=0;j<removeText.length;j++){
+			
+		}
+	}
+}
+
