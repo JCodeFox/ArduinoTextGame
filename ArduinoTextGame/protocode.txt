@@ -4,13 +4,20 @@ data=file.readByte();
 int firstID=-1;
 int lastID=-1;
 int i=0;
-while (data != ""){
-	data=file.readByte();
+while (data != -1){
+	data=file.read();
 	i++;
 	if(data==removeText[0]){
 		firstID=i;
 		for(int j=0;j<removeText.length;j++){
-			
+			if(removeText[j]==data){
+				lastID=i;
+			}else{
+				firstID=-1;
+				lastID=-1;
+			}
+			data=file.read();
+			i++;
 		}
 	}
 }
