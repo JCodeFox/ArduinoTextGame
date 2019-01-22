@@ -78,6 +78,12 @@ void loop() {
     /*dat=getValue(dat,'-',val);
     dat=getValue(dat,',',0);*/
   }
+  if(health<0){
+    menu=2;
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("You died!");
+  }
   frame+=1;
   if(frame>=500){
     health-=1;
@@ -147,15 +153,17 @@ int changeId(int val){
       }
   }else if(val==1){
     String item=getValue(dat,'-',currentId);
-    dollars-=getValue(item,',',1).toInt();
-    health+=getValue(item,',',1).toInt();
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Paid:");
-    lcd.print(getValue(item,',',1));
-    lcd.setCursor(0,1);
-    lcd.print(getValue(item,',',0));
-    delay(1000);
+    if(dollars-getValue(item,',',1).toInt()>=0){
+      dollars-=getValue(item,',',1).toInt();
+      health+=getValue(item,',',1).toInt();
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Paid:");
+      lcd.print(getValue(item,',',1));
+      lcd.setCursor(0,1);
+      lcd.print(getValue(item,',',0));
+      delay(1000);
+    }
     lcd.clear();
   }else if(val==2){
     currentId++;
