@@ -78,7 +78,7 @@ void loop() {
     /*dat=getValue(dat,'-',val);
     dat=getValue(dat,',',0);*/
   }
-  if(health<0){
+  if(health<0||health>200){
     menu=2;
     lcd.clear();
     lcd.setCursor(0,0);
