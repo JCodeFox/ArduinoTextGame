@@ -148,7 +148,7 @@ int changeId(int val){
   }else if(val==1){
     String item=getValue(dat,'-',currentId);
     dollars-=getValue(item,',',1).toInt();
-    health+=5;
+    health+=getValue(item,',',1).toInt();
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Paid:");
