@@ -75,7 +75,7 @@ void loop() {
     }else if(menu==1){
       healthScreen(val);
     }
-    /*dat=getValue(dat,'-',val);
+    /*dat=getValue(dat,'_',val);
     dat=getValue(dat,',',0);*/
   }
   if(health<0||health>200){
@@ -153,10 +153,10 @@ int changeId(int val){
         currentId=0;
       }
   }else if(val==1){
-    String item=getValue(dat,'-',currentId);
+    String item=getValue(dat,'_',currentId);
     if(dollars-getValue(item,',',1).toInt()>=0){
       dollars-=getValue(item,',',1).toInt();
-      health+=getValue(item,',',1).toInt();
+      health+=getValue(item,',',2).toInt();
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Paid:");
@@ -168,11 +168,11 @@ int changeId(int val){
     lcd.clear();
   }else if(val==2){
     currentId++;
-    if(getValue(dat,'-',currentId)==""){
+    if(getValue(dat,'_',currentId)==""){
       currentId--;
     }
   }
-  dat=getValue(dat,'-',currentId);
+  dat=getValue(dat,'_',currentId);
   String itemName=getValue(dat,',',0);
   String price=getValue(dat,',',1);
   lcd.setCursor(0,0);
