@@ -83,6 +83,7 @@ void loop() {
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("You died!");
+    while(true){}
   }
   frame+=1;
   if(frame>=500){
