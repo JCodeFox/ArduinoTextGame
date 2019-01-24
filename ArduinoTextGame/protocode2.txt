@@ -1,0 +1,26 @@
+//Found on https://forum.arduino.cc/index.php?topic=95303.0
+//Modified by James Bishop
+
+int idx = 0;
+
+String readLine()
+{
+  String buffer;
+  bool EOL = false;
+  while (! EOL)
+  {
+    c = readCharSD();  / reads 1 char from SD
+    if (c == '\n' || idx==19)  // prevent buffer overflow too..
+    { 
+      buffer[idx] = 0;
+      idx = 0;
+      EOL = true;
+    }
+    else
+    {
+      buffer[idx] = c;
+      idx++
+    }
+  }
+  return buffer;
+}

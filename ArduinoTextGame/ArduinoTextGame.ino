@@ -26,6 +26,7 @@ int currentId=0;
 const int SW_pin = 9; // digital pin connected to switch output
 const int X_pin = 0; // analog pin connected to X output
 const int Y_pin = 1; // analog pin connected to Y output
+const int menus=2;
 
 // The distance the stick has to move in order to be registered as moved
 const int nudge_x = 50;
@@ -35,6 +36,8 @@ const int nudge_y = 50;
 int center_x=0;
 int center_y=0;
 bool valueChanged=false;
+int menu=1;
+int frame=0;
 
 void setup() {
   initStick();
@@ -63,14 +66,36 @@ void setup() {
   Serial.println(getTextFromFile("data/inv"));
 }
 
-void loop() {                             
+void loop() {                            
   int val=buttonState();
   if(val>=0){
-    lcd.clear(); 
-    changeId(val);
-    /*dat=getValue(dat,'-',val);
+    lcd.clear();
+    if(menu==0){ 
+      changeId(val);
+    }else if(menu==1){
+      healthScreen(val);
+    }
+    /*dat=getValue(dat,'_',val);
     dat=getValue(dat,',',0);*/
   }
+  if(health<0||health>200){
+    menu=2;
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("You died!");
+    while(true){}
+  }
+  frame+=1;
+  if(frame>=500){
+    health-=1;
+    frame=0;
+    if(menu==1){
+      healthScreen(-1);
+    }else if(menu==0){
+      changeId(-1);
+    }
+  }
+  delay(1);
 }
 
 int buttonState(){
@@ -90,12 +115,35 @@ int buttonState(){
     num=0;
     valueChanged=true;
   }
+  if((stickXPos()>0)&&(valueChanged==false)){
+    menu+=1;
+    valueChanged=true;
+  }else if((stickXPos()<0)&&(valueChanged==false)){
+    menu-=1;
+    valueChanged=true;
+  }
   if((digitalRead(SW_pin)==1)&&(stickYPos()==0)){
     valueChanged=false;
   }
+  if(menu<0){
+    menu=0;
+  }else if(menu>=menus){
+    menu=menus-1;
+  }
   return num;
 }
-
+//Show health and money
+int healthScreen(int val){
+  if(val==0){
+    dollars+=1;
+  }
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("$");
+  lcd.print(dollars);
+  lcd.setCursor(0,1);
+  lcd.print(health);
+}
 int changeId(int val){
   String dat=getTextFromFile("test");
   dat=getValueById(dat,"items");
@@ -105,23 +153,26 @@ int changeId(int val){
         currentId=0;
       }
   }else if(val==1){
-    String item=getValue(dat,'-',currentId);
-    dollars-=getValue(item,',',1).toInt();
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Paid:");
-    lcd.print(getValue(item,',',1));
-    lcd.setCursor(0,1);
-    lcd.print(getValue(item,',',0));
-    delay(1000);
+    String item=getValue(dat,'_',currentId);
+    if(dollars-getValue(item,',',1).toInt()>=0){
+      dollars-=getValue(item,',',1).toInt();
+      health+=getValue(item,',',2).toInt();
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Paid:");
+      lcd.print(getValue(item,',',1));
+      lcd.setCursor(0,1);
+      lcd.print(getValue(item,',',0));
+      delay(1000);
+    }
     lcd.clear();
   }else if(val==2){
     currentId++;
-    if(getValue(dat,'-',currentId)==""){
+    if(getValue(dat,'_',currentId)==""){
       currentId--;
     }
   }
-  dat=getValue(dat,'-',currentId);
+  dat=getValue(dat,'_',currentId);
   String itemName=getValue(dat,',',0);
   String price=getValue(dat,',',1);
   lcd.setCursor(0,0);
