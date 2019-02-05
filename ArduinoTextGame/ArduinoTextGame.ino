@@ -38,6 +38,7 @@ int center_y=0;
 bool valueChanged=false;
 int menu=1;
 int frame=0;
+int clicks=0;
 
 void setup() {
   initStick();
@@ -137,6 +138,18 @@ int healthScreen(int val){
   if(val==0){
     dollars+=1;
   }
+  if(val==1){
+    clicks += 1;
+    if (clicks>=5){
+       lcd.clear();
+       lcd.setCursor(0,0);
+       lcd.print("Boneless");
+       lcd.setCursor(0,1);
+       lcd.print("Chicken");
+       delay(10000);
+       clicks = 0;
+    }
+  }
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print("$");
@@ -145,6 +158,7 @@ int healthScreen(int val){
   lcd.print(health);
 }
 int changeId(int val){
+  clicks = 0;
   String dat=getTextFromFile("test");
   dat=getValueById(dat,"items");
   if(val==0){
